@@ -10,10 +10,13 @@ import { useSelector } from "react-redux";
 
 import "fontsource-roboto";
 
+import ContentContainer from "./hoc/ContentContainer/ContentContainer";
 import Auth from "./containers/Auth/Auth";
 import ResolveAuth from "./containers/Auth/ResolveAuth/ResolveAuth";
 import Logout from "./containers/Auth/Logout/Logout";
-import Topic from './containers/Topic/Topic';
+import Topic from "./containers/Topic/Topic";
+import Level from "./containers/Level/Level";
+import Pool from "./containers/Pool/Pool";
 
 const theme = createMuiTheme({
   palette: {
@@ -33,7 +36,6 @@ const theme = createMuiTheme({
 function App() {
   const classes = useStyles();
   const isAuthenticated = useSelector((state) => state.auth.token !== null);
-  const userRole = useSelector((state) => state.auth.userRole);
 
   let routes = (
     <Switch>
@@ -51,11 +53,27 @@ function App() {
     routes = (
       <Switch>
         <Route path="/" exact>
-          <Redirect to="/topics" />
+          <Redirect to="/levels" />
         </Route>
-        <Route path="/schedule">
+        <Route path="/topics">
           <Layout>
-            <Topic />
+            <ContentContainer>
+              <Topic />
+            </ContentContainer>
+          </Layout>
+        </Route>
+        <Route path="/levels">
+          <Layout>
+            <ContentContainer>
+              <Level />
+            </ContentContainer>
+          </Layout>
+        </Route>
+        <Route path="/pools">
+          <Layout>
+            <ContentContainer>
+              <Pool />
+            </ContentContainer>
           </Layout>
         </Route>
         <Route path="/logout">

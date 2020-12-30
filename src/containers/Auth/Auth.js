@@ -1,15 +1,45 @@
-import { Snackbar, IconButton, Paper, TextField } from "@material-ui/core";
+import {
+  Snackbar,
+  IconButton,
+  Paper,
+  TextField,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  Button,
+  Typography,
+  FormHelperText,
+  CircularProgress,
+} from "@material-ui/core";
 import React, { useState } from "react";
 import useStyles from "./Auth.styles";
 import authBackground from "../../assets/images/auth-background.svg";
 import CloseIcon from "@material-ui/icons/Close";
-import { useForm } from "react-hook-form";
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import { useForm, Controller } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { signin, signinRefreshed } from "./AuthSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const Auth = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
-  const [authError, setAuthError] = useState(null);
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, control } = useForm();
+  const [showPassword, setShowPassword] = useState(false);
+  const signinStatus = useSelector((state) => state.auth.signinStatus);
+  const signinError = useSelector((state) => state.auth.signinError);
+
+  const onSubmit = async (data) => {
+    try {
+      const result = await dispatch(signin(data));
+      unwrapResult(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className={classes.auth}>
@@ -18,17 +48,17 @@ const Auth = () => {
           vertical: "bottom",
           horizontal: "left",
         }}
-        open={authError ? true : false}
-        autoHideDuration={6000}
-        onClose={() => setAuthError(null)}
-        message={authError}
+        open={signinError ? true : false}
+        autoHideDuration={2000}
+        onClose={() => dispatch(signinRefreshed())}
+        message={signinError}
         action={
           <React.Fragment>
             <IconButton
               size="small"
               aria-label="close"
               color="inherit"
-              onClick={() => setAuthError(null)}
+              onClick={() => dispatch(signinRefreshed())}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
@@ -41,7 +71,7 @@ const Auth = () => {
         src={authBackground}
       />
       <Paper className={classes.form}>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
             id="email"
             name="email"
@@ -54,19 +84,67 @@ const Auth = () => {
             error={Boolean(errors.email)}
             helperText={errors.email ? "*This field is required" : null}
           />
-          <TextField
-            id="password"
+          <Controller
             name="password"
-            type="password"
-            autoComplete="off"
-            inputRef={register({ required: true })}
-            label="Email"
-            variant="outlined"
+            control={control}
             defaultValue={""}
-            className={classes.formElement}
-            error={Boolean(errors.email)}
-            helperText={errors.email ? "*This field is required" : null}
+            rules={{ required: true }}
+            render={(props) => (
+              <FormControl className={classes.formElement} variant="outlined">
+                <InputLabel
+                  error={Boolean(errors.password)}
+                  htmlFor="outlined-adornment-password"
+                >
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  error={Boolean(errors.password)}
+                  id="outlined-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  value={props.value}
+                  onChange={(value) => props.onChange(value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() =>
+                          setShowPassword((showPassword) => !showPassword)
+                        }
+                        edge="end"
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  labelWidth={70}
+                />
+
+                {errors.password && (
+                  <FormHelperText error={Boolean(errors.password)}>
+                    * This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
           />
+          <div style={{ position: "relative" }}>
+            <Button
+              style={{
+                width: "100%",
+                paddingTop: "0.7rem",
+                paddingBottom: "0.7rem",
+              }}
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={signinStatus === "loading"}
+            >
+              <Typography>Login</Typography>
+            </Button>
+            {signinStatus === "loading" && (
+              <CircularProgress size={24} className={classes.buttonProgress} />
+            )}
+          </div>
         </form>
       </Paper>
     </div>
