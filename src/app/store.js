@@ -3,6 +3,7 @@ import authReducer from "../containers/Auth/AuthSlice";
 import levelReducer from "../containers/Level/LevelSlice";
 import topicReducer from "../containers/Topic/TopicSlice";
 import poolReducer from "../containers/Pool/PoolSlice";
+import questionReducer from "../containers/Question/QuestionSlice";
 
 export default configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export default configureStore({
     levels: levelReducer,
     topics: topicReducer,
     pools: poolReducer,
+    questions: questionReducer,
   },
   // eslint-disable-next-line no-undef
   devTools: process.env.NODE_ENV === "development",
