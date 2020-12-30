@@ -48,7 +48,7 @@ export default makeStyles((theme) => ({
     flexGrow: 1,
     minWidth: 369,
     padding: "0 24px",
-    marginTop: 56,
+    marginTop: 64,
     [theme.breakpoints.up("md")]: {
       marginTop: 64,
     },

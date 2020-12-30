@@ -5,7 +5,6 @@ import {
   Toolbar,
   Badge,
   IconButton,
-  Typography,
   Menu,
   MenuItem,
 } from "@material-ui/core";
@@ -17,6 +16,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 // Layout HOC includes AppBar and SideBar
 const Layout = (props) => {
@@ -26,7 +26,6 @@ const Layout = (props) => {
   const openAccountMenu = Boolean(accountMenuAnchorEl);
   const history = useHistory();
   const classes = useStyles();
-  const userRole = useSelector((state) => state.auth.userRole);
 
   // Handle maximize and minimize the side bar
   const handleToggleMaximizeSidebar = useCallback(() => {
@@ -61,9 +60,6 @@ const Layout = (props) => {
     history.replace("/logout");
   };
 
-  const name = localStorage.getItem("name");
-  const imageUrl = localStorage.getItem("imageUrl");
-
   return (
     <React.Fragment>
       <SideBar
@@ -71,7 +67,6 @@ const Layout = (props) => {
         mobileOpen={openedMobileSideBar}
         onToggleMaximize={handleToggleMaximizeSidebar}
         maximized={maximizedSideBar}
-        userRole={userRole}
       />
       <ElevationScroll {...props}>
         <AppBar
@@ -92,26 +87,13 @@ const Layout = (props) => {
             <div className={classes.grow}></div>
             <div className={classes.userSection}>
               <IconButton
-                aria-label="show 17 new notifications"
-                color="inherit"
-              >
-                <Badge badgeContent={17} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              <Typography>{name}</Typography>
-              <IconButton
                 edge="end"
                 aria-label="account of current user"
                 aria-haspopup="true"
                 color="inherit"
                 onClick={handleAccountMenu}
               >
-                <img
-                  style={{ width: 25, height: 25, borderRadius: 16 }}
-                  alt="account"
-                  src={imageUrl}
-                />
+                <AccountCircleIcon />
               </IconButton>
               <Menu
                 id="menu-appbar"

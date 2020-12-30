@@ -16,7 +16,7 @@ export default makeStyles((theme) => ({
     },
   },
   image: {
-    maxWidth: "70%",
+    maxWidth: "50%",
   },
   button: {
     padding: "0.7rem 1.5rem",
@@ -33,5 +33,13 @@ export default makeStyles((theme) => ({
     padding: "1rem",
     minWidth: "30%",
     borderRadius: 8,
+  },
+  buttonProgress: {
+    color: theme.palette.primary,
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
   },
 }));
