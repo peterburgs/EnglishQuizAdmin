@@ -22,7 +22,7 @@ import SimpleBar from "simplebar-react";
 import AddIcon from "@material-ui/icons/Add";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { setCurrentPool } from "../../Question/QuestionSlice";
+import { setCurrentPool } from "../PoolSlice";
 
 const StyledTableRow = withStyles(() => ({
   root: {

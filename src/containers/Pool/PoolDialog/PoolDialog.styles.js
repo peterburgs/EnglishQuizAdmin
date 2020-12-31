@@ -6,6 +6,7 @@ export default makeStyles((theme) => ({
     width: "100%",
   },
   dialog: {
+    minWidth: 600,
     borderRadius: 8,
   },
   buttonProgress: {

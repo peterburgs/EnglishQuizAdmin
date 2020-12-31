@@ -6,6 +6,7 @@ export default makeStyles((theme) => ({
     width: "100%",
   },
   dialog: {
+    minWidth: 600,
     borderRadius: 8,
   },
   buttonProgress: {
@@ -15,5 +16,13 @@ export default makeStyles((theme) => ({
     left: "50%",
     marginTop: -12,
     marginLeft: -12,
+  },
+  input: {
+    display: "none",
+  },
+  button: {
+    textTransform: "none",
+    minWidth: 150,
+    marginTop: "0.5rem",
   },
 }));

@@ -21,6 +21,8 @@ import { withStyles } from "@material-ui/core/styles";
 import SimpleBar from "simplebar-react";
 import AddIcon from "@material-ui/icons/Add";
 import { useDispatch } from "react-redux";
+import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
+import CustomizedSnackbar from "../../../components/CustomizedSnackbar/CustomizedSnackbar";
 
 const StyledTableRow = withStyles(() => ({
   root: {
@@ -38,6 +40,7 @@ const QuestionTable = (props) => {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
+  const [isCopied, setIsCopied] = useState(false);
 
   const [actionMenuAnchorEl, setActionMenuAnchorEl] = useState(null);
 
@@ -47,17 +50,20 @@ const QuestionTable = (props) => {
       label: "#",
     },
     {
-      id: "code",
+      id: "questionCode",
       label: "Question code",
     },
     {
       id: "questionRequirement",
-      isNumber: true,
       label: "Question requirement",
     },
     {
       id: "questionText",
       label: "Question text",
+    },
+    {
+      id: "createdAt",
+      label: "Created at",
     },
     {
       id: "actions",
@@ -122,6 +128,12 @@ const QuestionTable = (props) => {
 
   return (
     <div className={classes.questionTable}>
+      <CustomizedSnackbar
+        open={isCopied}
+        onClose={() => setIsCopied(false)}
+        message={"Copied question code"}
+        severity="success"
+      />
       <Paper className={classes.paper}>
         <EnhancedToolbar title={"Questions"}>
           <Button
@@ -168,10 +180,21 @@ const QuestionTable = (props) => {
                             console.log(row);
                           }}
                         >
-                          {row.name}
+                          {row.code}
                         </Button>
+                        <IconButton
+                          onClick={() => {
+                            navigator.clipboard.writeText(row.code);
+                            setIsCopied(true);
+                          }}
+                        >
+                          <FileCopyOutlinedIcon fontSize="small" />
+                        </IconButton>
                       </TableCell>
-                      <TableCell align="center">{row.order}</TableCell>
+                      <TableCell align="left">
+                        {row.questionRequirement}
+                      </TableCell>
+                      <TableCell align="left">{row.questionText}</TableCell>
                       <TableCell align="left">{row.createdAt}</TableCell>
                       <TableCell align="center">
                         <IconButton

@@ -15,24 +15,28 @@ const initialState = {
   topicIdToEdit: null,
   topicIdToDelete: null,
   searchResult: [],
+  count: 0,
 };
 
 export const addTopic = createAsyncThunk(
   "topics/addTopic",
-  async (topic, { rejectWithValue }) => {
+  async ({ topicInfo, selectedQuestions }, { rejectWithValue, getState }) => {
     try {
-      console.log(topic);
       const data = new FormData();
-      data.append("name", topic.name);
-      data.append("level", topic.level);
-      data.append("order", topic.order);
+      data.append("name", topicInfo.name);
+      data.append("level", topicInfo.level);
       data.append("isRemoved", false);
-      data.append("topicImage", topic.topicImage[0]);
-
-      const response = await api.post("/topics", data, {
+      data.append("topicImage", topicInfo.topicImage[0]);
+      data.append("order", getState().topics.count + 1);
+      const addTopicResult = await api.post("/topics", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      return response.data;
+      const questionsToAdd = {
+        topic: addTopicResult.data.topic._id,
+        questions: selectedQuestions,
+      };
+      await api.post("/topics/edit", questionsToAdd);
+      return addTopicResult.data;
     } catch (err) {
       console.log(err);
       return rejectWithValue(err.message);
@@ -48,7 +52,6 @@ export const updateTopic = createAsyncThunk(
       data.append("name", topic.name);
       data.append("level", topic.level);
       data.append("oldLevel", topic.oldLevel);
-      data.append("order", topic.order);
       data.append("isRemoved", false);
       if (topic.topicImage.length !== 0) {
         data.append("topicImage", topic.topicImage[0]);
@@ -143,7 +146,9 @@ const topicsSlice = createSlice({
   extraReducers: {
     // Add Topic reducers
     [addTopic.fulfilled]: (state, action) => {
-      state.topics.push(action.payload.topic);
+      const topic = action.payload.topic;
+      topic.level = action.payload.level;
+      state.topics.push(topic);
       state.searchResult = _.cloneDeep(state.topics);
       state.addTopicStatus = "succeeded";
     },
@@ -196,6 +201,7 @@ const topicsSlice = createSlice({
     // fetch Topic reducers
     [fetchTopic.fulfilled]: (state, action) => {
       state.topics = action.payload.topics;
+      state.count = action.payload.count;
       state.searchResult = action.payload.topics;
       state.fetchTopicStatus = "succeeded";
     },

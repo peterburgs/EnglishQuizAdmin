@@ -15,6 +15,7 @@ const initialState = {
   poolIdToEdit: null,
   poolIdToDelete: null,
   searchResult: [],
+  currentPool: null,
 };
 
 export const addPool = createAsyncThunk(
@@ -119,6 +120,9 @@ const PoolsSlice = createSlice({
         c.name.toLowerCase().includes(String(action.payload).toLowerCase())
       );
     },
+    setCurrentPool(state, action) {
+      state.currentPool = action.payload;
+    },
   },
   extraReducers: {
     // Add Pool reducers
@@ -197,6 +201,7 @@ export const {
   fetchPoolRefreshed,
   deletePoolRefreshed,
   search,
+  setCurrentPool,
 } = PoolsSlice.actions;
 
 export default PoolsSlice.reducer;

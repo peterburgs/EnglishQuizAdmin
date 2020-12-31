@@ -13,18 +13,41 @@ const initialState = {
   fetchQuestionStatus: "idle",
   fetchQuestionError: null,
   questionIdToEdit: null,
+  questionIdToView: null,
   questionIdToDelete: null,
   searchResult: [],
-  currentPool: null,
-  currentTopic: null,
 };
 
 export const addQuestion = createAsyncThunk(
   "questions/addQuestion",
-  async (question, { rejectWithValue }) => {
+  async (question, { rejectWithValue, getState }) => {
     try {
-      const data = { ...question, isRemoved: false };
-      const response = await api.post("/questions", data);
+      console.log(question);
+      const data = new FormData();
+      data.append("questionRequirement", question.questionRequirement);
+      data.append("questionText", question.questionText);
+      data.append("type", question.type);
+      if (question.type === "singleSelection") {
+        data.append(
+          "singleSelection",
+          JSON.stringify(question.singleSelection)
+        );
+      } else if (question.type === "translate") {
+        data.append("translate", JSON.stringify(question.translate));
+      } else {
+        data.append("arrange", JSON.stringify(question.arrange));
+      }
+      data.append("isRemoved", false);
+      if (getState().pools.currentPool) {
+        data.append("pool", getState().pools.currentPool._id);
+      }
+      if (question.questionImage.length !== 0) {
+        data.append("questionImage", question.questionImage[0]);
+      }
+
+      const response = await api.post("/questions", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return response.data;
     } catch (err) {
       console.log(err);
@@ -38,9 +61,34 @@ export const updateQuestion = createAsyncThunk(
   async (question, { rejectWithValue, getState }) => {
     console.log(question);
     try {
+      const data = new FormData();
+      data.append("questionRequirement", question.questionRequirement);
+      data.append("questionText", question.questionText);
+      data.append("type", question.type);
+      if (question.type === "singleSelection") {
+        data.append(
+          "singleSelection",
+          JSON.stringify(question.singleSelection)
+        );
+      } else if (question.type === "translate") {
+        data.append("translate", JSON.stringify(question.translate));
+      } else {
+        data.append("arrange", JSON.stringify(question.arrange));
+      }
+      data.append("isRemoved", false);
+      if (getState().pools.currentPool) {
+        data.append("pool", getState().pools.currentPool._id);
+      }
+      if (question.questionImage.length !== 0) {
+        data.append("questionImage", question.questionImage[0]);
+      }
+
       const res = await api.put(
         `/questions/${getState().questions.questionIdToEdit}`,
-        question
+        data,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
       return res.data;
     } catch (err) {
@@ -63,18 +111,27 @@ export const deleteQuestion = createAsyncThunk(
   }
 );
 
-export const fetchQuestion = createAsyncThunk(
-  "questions/fetchQuestion",
-  async (_, { rejectWithValue, getState }) => {
+export const fetchQuestionByTopicId = createAsyncThunk(
+  "questions/fetchQuestionByTopicId",
+  async (topicId, { rejectWithValue, getState }) => {
     try {
-      if (getState().questions.currentTopic) {
-        const res = await api.get("/questions/", {
-          params: { topicId: getState().questions.currentTopic._id },
-        });
-        return res.data;
-      }
       const res = await api.get("/questions/", {
-        params: { poolId: getState().questions.currentPool._id },
+        params: { topicId },
+      });
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const fetchQuestionByPoolId = createAsyncThunk(
+  "questions/fetchQuestionByPoolId",
+  async (poolId, { rejectWithValue, getState }) => {
+    try {
+      const res = await api.get("/questions/", {
+        params: { poolId },
       });
       return res.data;
     } catch (err) {
@@ -120,17 +177,17 @@ const QuestionsSlice = createSlice({
     setQuestionIdToEdit(state, action) {
       state.questionIdToEdit = action.payload;
     },
+    setQuestionIdToView(state, action) {
+      state.questionIdToView = action.payload;
+    },
     setQuestionIdToDelete(state, action) {
       state.questionIdToDelete = action.payload;
     },
     search(state, action) {
       console.log(action.payload);
       state.searchResult = state.questions.filter((c) =>
-        c.name.toLowerCase().includes(String(action.payload).toLowerCase())
+        c.code.toLowerCase().includes(String(action.payload).toLowerCase())
       );
-    },
-    setCurrentPool(state, action) {
-      state.currentPool = action.payload;
     },
   },
   extraReducers: {
@@ -187,15 +244,27 @@ const QuestionsSlice = createSlice({
       state.updateQuestionError = action.payload;
     },
     // fetch Question reducers
-    [fetchQuestion.fulfilled]: (state, action) => {
+    [fetchQuestionByTopicId.fulfilled]: (state, action) => {
       state.questions = action.payload.questions;
       state.searchResult = action.payload.questions;
       state.fetchQuestionStatus = "succeeded";
     },
-    [fetchQuestion.pending]: (state, action) => {
+    [fetchQuestionByTopicId.pending]: (state, action) => {
       state.fetchQuestionStatus = "loading";
     },
-    [fetchQuestion.rejected]: (state, action) => {
+    [fetchQuestionByTopicId.rejected]: (state, action) => {
+      state.fetchQuestionStatus = "failed";
+      state.fetchQuestionError = action.payload;
+    },
+    [fetchQuestionByPoolId.fulfilled]: (state, action) => {
+      state.questions = action.payload.questions;
+      state.searchResult = action.payload.questions;
+      state.fetchQuestionStatus = "succeeded";
+    },
+    [fetchQuestionByPoolId.pending]: (state, action) => {
+      state.fetchQuestionStatus = "loading";
+    },
+    [fetchQuestionByPoolId.rejected]: (state, action) => {
       state.fetchQuestionStatus = "failed";
       state.fetchQuestionError = action.payload;
     },
@@ -206,6 +275,7 @@ export const {
   addQuestionRefreshed,
   updateQuestionRefreshed,
   setQuestionIdToEdit,
+  setQuestionIdToView,
   setQuestionIdToDelete,
   fetchQuestionRefreshed,
   deleteQuestionRefreshed,

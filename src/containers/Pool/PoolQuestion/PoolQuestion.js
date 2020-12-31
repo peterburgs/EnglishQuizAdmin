@@ -15,7 +15,7 @@ import QuestionDialog from "../../Question/QuestionDialog/QuestionDialog";
 import ConfirmDialog from "../../../components/ConfirmDialog/ConfirmDialog";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchQuestion,
+  fetchQuestionByPoolId,
   setQuestionIdToEdit,
   setQuestionIdToDelete,
   search,
@@ -26,14 +26,11 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import Spinner from "../../../components/Spinner/Spinner";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 
-const useFetchQuestion = () => {
+const useFetchQuestion = (poolId) => {
   const dispatch = useDispatch();
-
-  const { poolId } = useParams();
 
   const fetchQuestionStatus = useSelector(
     (state) => state.questions.fetchQuestionStatus
@@ -46,7 +43,9 @@ const useFetchQuestion = () => {
     if (fetchQuestionStatus === "idle") {
       (async () => {
         try {
-          const fetchQuestionResult = await dispatch(fetchQuestion());
+          const fetchQuestionResult = await dispatch(
+            fetchQuestionByPoolId(poolId)
+          );
           unwrapResult(fetchQuestionResult);
         } catch (err) {
           console.log(err);
@@ -101,10 +100,13 @@ const PoolQuestion = () => {
   const questionIdToEdit = useSelector(
     (state) => state.questions.questionIdToEdit
   );
-  const currentPool = useSelector((state) => state.questions.currentPool);
+
+  const currentPool = useSelector((state) => state.pools.currentPool);
 
   // Fetch Question state
-  const [fetchQuestionStatus, fetchQuestionError] = useFetchQuestion();
+  const [fetchQuestionStatus, fetchQuestionError] = useFetchQuestion(
+    currentPool._id
+  );
 
   // Delete Question state
   const [
