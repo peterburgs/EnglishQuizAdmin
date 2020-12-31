@@ -7,6 +7,7 @@ export default makeStyles((theme) => ({
   },
   dialog: {
     borderRadius: 8,
+    padding: "2rem",
   },
   buttonProgress: {
     color: theme.palette.primary,

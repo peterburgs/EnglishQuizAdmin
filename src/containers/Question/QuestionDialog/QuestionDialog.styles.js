@@ -17,4 +17,12 @@ export default makeStyles((theme) => ({
     marginTop: -12,
     marginLeft: -12,
   },
+  input: {
+    display: "none",
+  },
+  button: {
+    textTransform: "none",
+    minWidth: 150,
+    marginTop: "0.5rem",
+  },
 }));

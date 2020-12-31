@@ -17,6 +17,7 @@ import Logout from "./containers/Auth/Logout/Logout";
 import Topic from "./containers/Topic/Topic";
 import Level from "./containers/Level/Level";
 import Pool from "./containers/Pool/Pool";
+import PoolQuestion from "./containers/Pool/PoolQuestion/PoolQuestion";
 
 const theme = createMuiTheme({
   palette: {
@@ -69,10 +70,17 @@ function App() {
             </ContentContainer>
           </Layout>
         </Route>
-        <Route path="/pools">
+        <Route path="/pools" exact>
           <Layout>
             <ContentContainer>
               <Pool />
+            </ContentContainer>
+          </Layout>
+        </Route>
+        <Route path="/pools/:poolId/questions">
+          <Layout>
+            <ContentContainer>
+              <PoolQuestion />
             </ContentContainer>
           </Layout>
         </Route>

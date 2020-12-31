@@ -12,8 +12,8 @@ import {
   Menu,
   MenuItem,
 } from "@material-ui/core";
-import { setPoolIdToEdit, setPoolIdToDelete } from "../PoolSlice";
-import useStyles from "./PoolTable.styles";
+import { setQuestionIdToEdit, setQuestionIdToDelete } from "../QuestionSlice";
+import useStyles from "./QuestionTable.styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import EnhancedToolbar from "../../../hoc/EnhancedTableToolbar/EnhancedTableToolbar";
 import EnhancedTableHead from "../../../components/EnhancedTableHead/EnhancedTableHead";
@@ -21,8 +21,8 @@ import { withStyles } from "@material-ui/core/styles";
 import SimpleBar from "simplebar-react";
 import AddIcon from "@material-ui/icons/Add";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { setCurrentPool } from "../PoolSlice";
+import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
+import CustomizedSnackbar from "../../../components/CustomizedSnackbar/CustomizedSnackbar";
 
 const StyledTableRow = withStyles(() => ({
   root: {
@@ -32,7 +32,7 @@ const StyledTableRow = withStyles(() => ({
   },
 }))(TableRow);
 
-const PoolTable = (props) => {
+const QuestionTable = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -40,9 +40,9 @@ const PoolTable = (props) => {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
+  const [isCopied, setIsCopied] = useState(false);
 
   const [actionMenuAnchorEl, setActionMenuAnchorEl] = useState(null);
-  const history = useHistory();
 
   const headCells = [
     {
@@ -50,17 +50,20 @@ const PoolTable = (props) => {
       label: "#",
     },
     {
-      id: "name",
-      label: "Pool name",
+      id: "questionCode",
+      label: "Question code",
     },
     {
-      id: "numberOfQuestions",
-      isNumber: true,
-      label: "The number of questions",
+      id: "questionRequirement",
+      label: "Question requirement",
+    },
+    {
+      id: "questionText",
+      label: "Question text",
     },
     {
       id: "createdAt",
-      label: "Created At",
+      label: "Created at",
     },
     {
       id: "actions",
@@ -111,7 +114,7 @@ const PoolTable = (props) => {
 
   const emptyRows =
     rowsPerPage -
-    Math.min(rowsPerPage, props.pools.length - page * rowsPerPage);
+    Math.min(rowsPerPage, props.questions.length - page * rowsPerPage);
 
   // handle open menu context when clicking account icon
   const handleOpenActionMenu = (event) => {
@@ -124,17 +127,23 @@ const PoolTable = (props) => {
   };
 
   return (
-    <div className={classes.poolTable}>
+    <div className={classes.questionTable}>
+      <CustomizedSnackbar
+        open={isCopied}
+        onClose={() => setIsCopied(false)}
+        message={"Copied question code"}
+        severity="success"
+      />
       <Paper className={classes.paper}>
-        <EnhancedToolbar title={"Pools"}>
+        <EnhancedToolbar title={"Questions"}>
           <Button
             className={classes.button}
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            onClick={props.onAddPool}
+            onClick={props.onAddQuestion}
           >
-            New pool
+            New question
           </Button>
         </EnhancedToolbar>
         <TableContainer>
@@ -153,7 +162,7 @@ const PoolTable = (props) => {
                 isAllowSort={true}
               />
               <TableBody>
-                {stableSort(props.pools, getComparator(order, orderBy))
+                {stableSort(props.questions, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <StyledTableRow key={row._id} className={classes.row}>
@@ -167,16 +176,25 @@ const PoolTable = (props) => {
                             fontWeight: "bold",
                           }}
                           onClick={() => {
-                            dispatch(setCurrentPool(row));
-                            history.push(`/pools/${row._id}/questions`);
+                            dispatch(setQuestionIdToEdit(row._id));
+                            console.log(row);
                           }}
                         >
-                          {row.name}
+                          {row.code}
                         </Button>
+                        <IconButton
+                          onClick={() => {
+                            navigator.clipboard.writeText(row.code);
+                            setIsCopied(true);
+                          }}
+                        >
+                          <FileCopyOutlinedIcon fontSize="small" />
+                        </IconButton>
                       </TableCell>
-                      <TableCell align="center">
-                        {row.questions.length}
+                      <TableCell align="left">
+                        {row.questionRequirement}
                       </TableCell>
+                      <TableCell align="left">{row.questionText}</TableCell>
                       <TableCell align="left">{row.createdAt}</TableCell>
                       <TableCell align="center">
                         <IconButton
@@ -206,7 +224,7 @@ const PoolTable = (props) => {
                         >
                           <MenuItem
                             onClick={() => {
-                              dispatch(setPoolIdToEdit(row._id));
+                              dispatch(setQuestionIdToEdit(row._id));
                               setActionMenuAnchorEl(null);
                             }}
                           >
@@ -214,7 +232,7 @@ const PoolTable = (props) => {
                           </MenuItem>
                           <MenuItem
                             onClick={() => {
-                              dispatch(setPoolIdToDelete(row._id));
+                              dispatch(setQuestionIdToDelete(row._id));
                               setActionMenuAnchorEl(null);
                             }}
                           >
@@ -236,7 +254,7 @@ const PoolTable = (props) => {
         <TablePagination
           rowsPerPageOptions={[10]}
           component="div"
-          count={props.pools.length}
+          count={props.questions.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
@@ -247,4 +265,4 @@ const PoolTable = (props) => {
   );
 };
 
-export default PoolTable;
+export default QuestionTable;

@@ -106,7 +106,6 @@ const EditTopicDialog = (props) => {
         console.log(result);
         unwrapResult(result);
         setValue("name", result.payload.topic.name);
-        setValue("order", result.payload.topic.order);
         setValue("level", result.payload.topic.level._id);
         setUploadedImageUrl(
           api.defaults.baseURL +
@@ -174,19 +173,6 @@ const EditTopicDialog = (props) => {
               className={classes.formElement}
               error={Boolean(errors.name)}
               helperText={errors.name ? "*This field is required" : null}
-            />
-            <TextField
-              id="order"
-              name="order"
-              type="number"
-              autoComplete="off"
-              inputRef={register({ required: true })}
-              label="Order"
-              variant="outlined"
-              defaultValue={0}
-              className={classes.formElement}
-              error={Boolean(errors.order)}
-              helperText={errors.order ? "*This field is required" : null}
             />
             <Controller
               name="level"
