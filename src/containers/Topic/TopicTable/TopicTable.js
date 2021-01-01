@@ -21,6 +21,8 @@ import { withStyles } from "@material-ui/core/styles";
 import SimpleBar from "simplebar-react";
 import AddIcon from "@material-ui/icons/Add";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { setCurrentTopic } from "../TopicSlice";
 
 const StyledTableRow = withStyles(() => ({
   root: {
@@ -33,6 +35,7 @@ const StyledTableRow = withStyles(() => ({
 const TopicTable = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
@@ -168,8 +171,8 @@ const TopicTable = (props) => {
                             fontWeight: "bold",
                           }}
                           onClick={() => {
-                            dispatch(setTopicIdToEdit(row._id));
-                            console.log(row);
+                            dispatch(setCurrentTopic(row));
+                            history.push(`/topics/${row._id}/questions`);
                           }}
                         >
                           {row.name}

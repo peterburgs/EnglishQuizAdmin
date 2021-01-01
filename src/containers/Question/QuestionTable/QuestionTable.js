@@ -131,7 +131,7 @@ const QuestionTable = (props) => {
       <CustomizedSnackbar
         open={isCopied}
         onClose={() => setIsCopied(false)}
-        message={"Copied question code"}
+        message={"Question code copied"}
         severity="success"
       />
       <Paper className={classes.paper}>
@@ -147,7 +147,7 @@ const QuestionTable = (props) => {
           </Button>
         </EnhancedToolbar>
         <TableContainer>
-          <SimpleBar style={{ maxHeight: "calc(100% - 10px)" }}>
+          <SimpleBar style={{ maxHeight: "calc(50vh - 10px)" }}>
             <Table
               style={{
                 minWidth: 700,
