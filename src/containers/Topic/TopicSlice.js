@@ -6,6 +6,8 @@ const initialState = {
   topics: [],
   addTopicStatus: "idle",
   addTopicError: null,
+  addQuestionToTopicStatus: "idle",
+  addQuestionToTopicError: null,
   deleteTopicStatus: "idle",
   deleteTopicError: null,
   updateTopicStatus: "idle",
@@ -16,6 +18,7 @@ const initialState = {
   topicIdToDelete: null,
   searchResult: [],
   count: 0,
+  currentTopic: null,
 };
 
 export const addTopic = createAsyncThunk(
@@ -37,6 +40,23 @@ export const addTopic = createAsyncThunk(
       };
       await api.post("/topics/edit", questionsToAdd);
       return addTopicResult.data;
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const addQuestionToTopic = createAsyncThunk(
+  "topics/addQuestionToTopic",
+  async ({ selectedQuestions }, { rejectWithValue, getState }) => {
+    try {
+      const questionsToAdd = {
+        topic: getState().topics.currentTopic._id,
+        questions: selectedQuestions,
+      };
+      const res = await api.post("/topics/edit", questionsToAdd);
+      return res.data;
     } catch (err) {
       console.log(err);
       return rejectWithValue(err.message);
@@ -118,6 +138,10 @@ const topicsSlice = createSlice({
       state.addTopicError = null;
       state.addTopicStatus = "idle";
     },
+    addQuestionToTopicRefreshed(state) {
+      state.addQuestionToTopicError = null;
+      state.addQuestionToTopicStatus = "idle";
+    },
     updateTopicRefreshed(state) {
       state.updateTopicError = null;
       state.updateTopicStatus = "idle";
@@ -142,6 +166,9 @@ const topicsSlice = createSlice({
         c.name.toLowerCase().includes(String(action.payload).toLowerCase())
       );
     },
+    setCurrentTopic(state, action) {
+      state.currentTopic = action.payload;
+    },
   },
   extraReducers: {
     // Add Topic reducers
@@ -158,6 +185,16 @@ const topicsSlice = createSlice({
     [addTopic.rejected]: (state, action) => {
       state.addTopicStatus = "failed";
       state.addTopicError = action.payload;
+    },
+    [addQuestionToTopic.fulfilled]: (state, action) => {
+      state.addQuestionToTopicStatus = "succeeded";
+    },
+    [addQuestionToTopic.pending]: (state, action) => {
+      state.addQuestionToTopicStatus = "loading";
+    },
+    [addQuestionToTopic.rejected]: (state, action) => {
+      state.addQuestionToTopicStatus = "failed";
+      state.addQuestionToTopicError = action.payload;
     },
     // Delete Topic reducers
     [deleteTopic.fulfilled]: (state, action) => {
@@ -200,6 +237,7 @@ const topicsSlice = createSlice({
     },
     // fetch Topic reducers
     [fetchTopic.fulfilled]: (state, action) => {
+      console.log(action.payload);
       state.topics = action.payload.topics;
       state.count = action.payload.count;
       state.searchResult = action.payload.topics;
@@ -222,7 +260,9 @@ export const {
   setTopicIdToDelete,
   fetchTopicRefreshed,
   deleteTopicRefreshed,
+  addQuestionToTopicRefreshed,
   search,
+  setCurrentTopic,
 } = topicsSlice.actions;
 
 export default topicsSlice.reducer;
