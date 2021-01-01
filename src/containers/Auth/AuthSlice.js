@@ -11,8 +11,9 @@ export const signin = createAsyncThunk(
   "auth/signin",
   async (signinData, { rejectWithValue }) => {
     try {
-      const response = await api.post("/signin", signinData);
+      const response = await api.post("/signin/admin", signinData);
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", response.data.userCredential.email);
       return response.data;
     } catch (err) {
       console.log(err);
@@ -47,7 +48,7 @@ const authSlice = createSlice({
     },
     [signin.rejected]: (state, action) => {
       state.signinStatus = "failed";
-      state.signinError = action.payload;
+      state.signinError = "Invalid email or password";
     },
   },
 });

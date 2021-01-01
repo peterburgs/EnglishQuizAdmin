@@ -18,6 +18,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Hidden,
 } from "@material-ui/core";
 import useStyles from "./QuestionDialog.styles";
 import { useDispatch, useSelector, batch } from "react-redux";
@@ -35,6 +36,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import api from "../../../api/index";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
+import { v1 as uuidv1 } from "uuid";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -467,6 +469,24 @@ const QuestionDialog = (props) => {
                   }
                 />
               </Grid>
+              <Hidden xsUp implementation="css">
+                <TextField
+                  style={{ width: "100%" }}
+                  name={`arrange[${index}]._id`}
+                  autoComplete="off"
+                  inputRef={register({ required: type === "arrange" })}
+                  label="_id"
+                  variant="outlined"
+                  disabled={Boolean(questionIdToView)}
+                  defaultValue={item._id}
+                  error={Boolean(errors[`arrange[${index}]._id`])}
+                  helperText={
+                    errors[`arrange[${index}]._id`]
+                      ? "*This field is required"
+                      : null
+                  }
+                />
+              </Hidden>
               <Grid item xs={3}>
                 <TextField
                   style={{ width: "100%", marginBottom: "1rem" }}
@@ -507,7 +527,9 @@ const QuestionDialog = (props) => {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            onClick={() => arrangeAppend({ word: "", order: "" })}
+            onClick={() =>
+              arrangeAppend({ word: "", order: "", _id: uuidv1() })
+            }
           >
             New word
           </Button>
