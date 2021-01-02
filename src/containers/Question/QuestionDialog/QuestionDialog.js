@@ -89,7 +89,14 @@ const useUpdateQuestion = () => {
 const QuestionDialog = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { register, handleSubmit, errors, setValue, control } = useForm();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    setValue,
+    control,
+    reset,
+  } = useForm();
 
   const {
     fields: arrangeFields,
@@ -181,6 +188,8 @@ const QuestionDialog = (props) => {
           setUploadedImageUrl(null);
         }
       })();
+    } else {
+      setUploadedImageUrl(null);
     }
   }, [
     dispatch,
@@ -226,6 +235,7 @@ const QuestionDialog = (props) => {
     if (type === "arrange") {
       if (arrangeFields.length === 0) return;
     }
+    console.log(data);
     if (questionIdToEdit) {
       await handleUpdateQuestion(data);
       props.onFinish();
@@ -474,7 +484,7 @@ const QuestionDialog = (props) => {
                   style={{ width: "100%" }}
                   name={`arrange[${index}]._id`}
                   autoComplete="off"
-                  inputRef={register({ required: type === "arrange" })}
+                  inputRef={register}
                   label="_id"
                   variant="outlined"
                   disabled={Boolean(questionIdToView)}
@@ -680,6 +690,7 @@ const QuestionDialog = (props) => {
                     value={props.value}
                     onChange={(e) => {
                       props.onChange(e.target.value);
+                      reset();
                       setType(e.target.value);
                     }}
                     label="Type"

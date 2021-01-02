@@ -26,7 +26,7 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import Spinner from "../../../components/Spinner/Spinner";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 
 const useFetchQuestion = (poolId) => {
@@ -52,6 +52,7 @@ const useFetchQuestion = (poolId) => {
         }
       })();
     }
+
     return () => {
       if (
         fetchQuestionStatus === "failed" ||
@@ -105,7 +106,7 @@ const PoolQuestion = () => {
 
   // Fetch Question state
   const [fetchQuestionStatus, fetchQuestionError] = useFetchQuestion(
-    currentPool._id
+    currentPool ? currentPool._id : null
   );
 
   // Delete Question state

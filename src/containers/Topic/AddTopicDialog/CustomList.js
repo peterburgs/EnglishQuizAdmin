@@ -20,7 +20,7 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import CustomizedSnackbar from "../../../components/CustomizedSnackbar/CustomizedSnackbar";
 import QuestionDialog from "../../Question/QuestionDialog/QuestionDialog";
-import DetailsIcon from "@material-ui/icons/Details";
+import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -142,7 +142,7 @@ const CustomList = (props) => {
                       onClick={() => dispatch(setQuestionIdToView(element._id))}
                       edge="end"
                     >
-                      <DetailsIcon />
+                      <MoreHorizOutlinedIcon />
                     </IconButton>
                   </ListItemSecondaryAction>
                 </ListItem>

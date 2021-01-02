@@ -39,6 +39,8 @@ const theme = createMuiTheme({
 function App() {
   const classes = useStyles();
   const isAuthenticated = useSelector((state) => state.auth.token !== null);
+  const currentPool = useSelector((state) => state.pools.currentPool);
+  const currentTopic = useSelector((state) => state.topics.currentTopic);
 
   let routes = (
     <Switch>
@@ -65,11 +67,15 @@ function App() {
           </Layout>
         </Route>
         <Route path="/topics/:topicId/questions">
-          <Layout>
-            <ContentContainer>
-              <TopicQuestion />
-            </ContentContainer>
-          </Layout>
+          {currentTopic ? (
+            <Layout>
+              <ContentContainer>
+                <TopicQuestion />
+              </ContentContainer>
+            </Layout>
+          ) : (
+            <Redirect to="/topics" />
+          )}
         </Route>
         <Route path="/levels">
           <Layout>
@@ -86,11 +92,15 @@ function App() {
           </Layout>
         </Route>
         <Route path="/pools/:poolId/questions">
-          <Layout>
-            <ContentContainer>
-              <PoolQuestion />
-            </ContentContainer>
-          </Layout>
+          {currentPool ? (
+            <Layout>
+              <ContentContainer>
+                <PoolQuestion />
+              </ContentContainer>
+            </Layout>
+          ) : (
+            <Redirect to="/pools" />
+          )}
         </Route>
         <Route path="/learners" exact>
           <Layout>

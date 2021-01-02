@@ -177,7 +177,7 @@ const EditTopicDialog = (props) => {
             <Controller
               name="level"
               control={control}
-              defaultValue={levels[0]._id}
+              defaultValue={levels.length !== 0 ? levels[0]._id : null}
               rules={{ required: true }}
               render={(props) => (
                 <FormControl variant="outlined" className={classes.formElement}>
