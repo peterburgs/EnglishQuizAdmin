@@ -13,6 +13,7 @@ const ResolveAuth = () => {
       dispatch(logout());
       history.replace("/signin");
     } else {
+      console.log("hello");
       const expirationDate = new Date(localStorage.getItem("expirationDate"));
       if (expirationDate > new Date()) {
         dispatch(authSuccess({ token: token }));
