@@ -138,7 +138,7 @@ const PoolTable = (props) => {
           </Button>
         </EnhancedToolbar>
         <TableContainer>
-          <SimpleBar style={{ maxHeight: "calc(100% - 10px)" }}>
+          <SimpleBar style={{ maxHeight: "calc(40vh)" }}>
             <Table
               style={{
                 minWidth: 700,

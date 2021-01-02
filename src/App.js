@@ -19,6 +19,7 @@ import Level from "./containers/Level/Level";
 import Pool from "./containers/Pool/Pool";
 import PoolQuestion from "./containers/Pool/PoolQuestion/PoolQuestion";
 import TopicQuestion from "./containers/Topic/TopicQuestion/TopicQuestion";
+import Learner from "./containers/Learner/Learner";
 
 const theme = createMuiTheme({
   palette: {
@@ -41,13 +42,12 @@ function App() {
 
   let routes = (
     <Switch>
-      <Route path="/" exact>
-        <ResolveAuth />
-      </Route>
-      <Route path="/signin">
+      <Route path="/signin" exact>
         <Auth />
       </Route>
-      <Redirect to="/" />
+      <Route path="/">
+        <ResolveAuth />
+      </Route>
     </Switch>
   );
 
@@ -89,6 +89,13 @@ function App() {
           <Layout>
             <ContentContainer>
               <PoolQuestion />
+            </ContentContainer>
+          </Layout>
+        </Route>
+        <Route path="/learners" exact>
+          <Layout>
+            <ContentContainer>
+              <Learner />
             </ContentContainer>
           </Layout>
         </Route>

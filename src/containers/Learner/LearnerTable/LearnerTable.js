@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  IconButton,
   Paper,
   TableContainer,
   TableBody,
@@ -9,17 +8,13 @@ import {
   TableRow,
   TablePagination,
   Button,
-  Menu,
-  MenuItem,
 } from "@material-ui/core";
-import { setLevelIdToEdit, setLevelIdToDelete } from "../LevelSlice";
-import useStyles from "./LevelTable.styles";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { setLearnerIdToDisable, setLearnerIdToEnable } from "../LearnerSlice";
+import useStyles from "./LearnerTable.styles";
 import EnhancedToolbar from "../../../hoc/EnhancedTableToolbar/EnhancedTableToolbar";
 import EnhancedTableHead from "../../../components/EnhancedTableHead/EnhancedTableHead";
 import { withStyles } from "@material-ui/core/styles";
 import SimpleBar from "simplebar-react";
-import AddIcon from "@material-ui/icons/Add";
 import { useDispatch } from "react-redux";
 
 const StyledTableRow = withStyles(() => ({
@@ -30,7 +25,7 @@ const StyledTableRow = withStyles(() => ({
   },
 }))(TableRow);
 
-const LevelTable = (props) => {
+const LearnerTable = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -39,21 +34,19 @@ const LevelTable = (props) => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
 
-  const [actionMenuAnchorEl, setActionMenuAnchorEl] = useState(null);
-
   const headCells = [
     {
       id: "#",
       label: "#",
     },
     {
-      id: "name",
-      label: "Level name",
+      id: "fullName",
+      label: "Learner name",
     },
     {
-      id: "order",
+      id: "email",
       isNumber: true,
-      label: "Order",
+      label: "email",
     },
     {
       id: "createdAt",
@@ -108,32 +101,12 @@ const LevelTable = (props) => {
 
   const emptyRows =
     rowsPerPage -
-    Math.min(rowsPerPage, props.levels.length - page * rowsPerPage);
-
-  // handle open menu context when clicking account icon
-  const handleOpenActionMenu = (event) => {
-    setActionMenuAnchorEl(event.currentTarget);
-  };
-
-  // handle close menu context when clicking account icon
-  const handleCloseActionMenu = () => {
-    setActionMenuAnchorEl(null);
-  };
+    Math.min(rowsPerPage, props.learners.length - page * rowsPerPage);
 
   return (
-    <div className={classes.levelTable}>
+    <div className={classes.learnerTable}>
       <Paper className={classes.paper}>
-        <EnhancedToolbar title={"Levels"}>
-          <Button
-            className={classes.button}
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={props.onAddLevel}
-          >
-            New Level
-          </Button>
-        </EnhancedToolbar>
+        <EnhancedToolbar title={"Learners"}></EnhancedToolbar>
         <TableContainer>
           <SimpleBar style={{ maxHeight: "calc(40vh)" }}>
             <Table
@@ -150,72 +123,40 @@ const LevelTable = (props) => {
                 isAllowSort={true}
               />
               <TableBody>
-                {stableSort(props.levels, getComparator(order, orderBy))
+                {stableSort(props.learners, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <StyledTableRow key={row._id} className={classes.row}>
                       <TableCell component="th" scope="row">
                         {rowsPerPage * page + index + 1}
                       </TableCell>
-                      <TableCell align="left">
-                        <Button
-                          style={{
-                            color: "#d7385e",
-                            fontWeight: "bold",
-                          }}
-                          onClick={() => {
-                            dispatch(setLevelIdToEdit(row._id));
-                            console.log(row);
-                          }}
-                        >
-                          {row.name}
-                        </Button>
+                      <TableCell align="left">{row.fullName}</TableCell>
+                      <TableCell align="center">
+                        {row.userCredential.email}
                       </TableCell>
-                      <TableCell align="center">{row.order}</TableCell>
                       <TableCell align="left">{row.createdAt}</TableCell>
                       <TableCell align="center">
-                        <IconButton
-                          id={`${row._id}-menu`} // <-- Magic code
-                          onClick={handleOpenActionMenu}
-                          style={{ padding: 0 }}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          anchorEl={actionMenuAnchorEl}
-                          anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                          }}
-                          keepMounted
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                          }}
-                          open={
-                            actionMenuAnchorEl
-                              ? actionMenuAnchorEl.id === `${row._id}-menu`
-                              : false
-                          } // <-- Magic code
-                          onClose={handleCloseActionMenu}
-                        >
-                          <MenuItem
-                            onClick={() => {
-                              dispatch(setLevelIdToEdit(row._id));
-                              setActionMenuAnchorEl(null);
-                            }}
+                        {row.userCredential.isActive ? (
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() =>
+                              dispatch(setLearnerIdToDisable(row._id))
+                            }
                           >
-                            Edit
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() => {
-                              dispatch(setLevelIdToDelete(row._id));
-                              setActionMenuAnchorEl(null);
-                            }}
+                            Disable
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() =>
+                              dispatch(setLearnerIdToEnable(row._id))
+                            }
                           >
-                            Delete
-                          </MenuItem>
-                        </Menu>
+                            Enable
+                          </Button>
+                        )}
                       </TableCell>
                     </StyledTableRow>
                   ))}
@@ -231,7 +172,7 @@ const LevelTable = (props) => {
         <TablePagination
           rowsPerPageOptions={[10]}
           component="div"
-          count={props.levels.length}
+          count={props.learners.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
@@ -242,4 +183,4 @@ const LevelTable = (props) => {
   );
 };
 
-export default LevelTable;
+export default LearnerTable;
