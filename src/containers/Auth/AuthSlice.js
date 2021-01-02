@@ -9,11 +9,19 @@ const initialState = {
 
 export const signin = createAsyncThunk(
   "auth/signin",
-  async (signinData, { rejectWithValue }) => {
+  async (signinData, { rejectWithValue, dispatch }) => {
     try {
       const response = await api.post("/signin/admin", signinData);
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("email", response.data.userCredential.email);
+      const expirationDate = new Date(
+        new Date().getTime() + response.data.expiresIn * 3600000
+      );
+      localStorage.setItem("expirationDate", expirationDate);
+      setTimeout(() => {
+        alert("Session timeout!");
+        dispatch(logout());
+      }, expirationDate.getTime() - new Date().getTime());
       return response.data;
     } catch (err) {
       console.log(err);
@@ -32,6 +40,8 @@ const authSlice = createSlice({
     logout(state, action) {
       state.token = null;
       localStorage.removeItem("token");
+      localStorage.removeItem("email");
+      localStorage.removeItem("expirationDate");
     },
     signinRefreshed(state, action) {
       state.signinStatus = "idle";

@@ -166,10 +166,10 @@ const SideBar = (props) => {
             />
           </svg>
         }
-        link="/users"
+        link="/learners"
         onSideBarClose={props.onMobileClose}
       >
-        Users
+        Learners
       </NavigationItem>
     </React.Fragment>
   );
