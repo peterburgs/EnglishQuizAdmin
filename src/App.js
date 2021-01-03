@@ -20,6 +20,7 @@ import Pool from "./containers/Pool/Pool";
 import PoolQuestion from "./containers/Pool/PoolQuestion/PoolQuestion";
 import TopicQuestion from "./containers/Topic/TopicQuestion/TopicQuestion";
 import Learner from "./containers/Learner/Learner";
+import Issue from "./containers/Issue/Issue";
 
 const theme = createMuiTheme({
   palette: {
@@ -107,6 +108,11 @@ function App() {
             <ContentContainer>
               <Learner />
             </ContentContainer>
+          </Layout>
+        </Route>
+        <Route path="/issues" exact>
+          <Layout>
+            <Issue />
           </Layout>
         </Route>
         <Route path="/logout">
