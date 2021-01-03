@@ -77,7 +77,7 @@ const Auth = () => {
             name="email"
             autoComplete="off"
             inputRef={register({ required: true })}
-            label="Email"
+            placeholder={"Email address"}
             variant="outlined"
             defaultValue={""}
             className={classes.formElement}
@@ -91,13 +91,8 @@ const Auth = () => {
             rules={{ required: true }}
             render={(props) => (
               <FormControl className={classes.formElement} variant="outlined">
-                <InputLabel
-                  error={Boolean(errors.password)}
-                  htmlFor="outlined-adornment-password"
-                >
-                  Password
-                </InputLabel>
                 <OutlinedInput
+                  placeholder="Password"
                   error={Boolean(errors.password)}
                   id="outlined-adornment-password"
                   type={showPassword ? "text" : "password"}
@@ -116,7 +111,6 @@ const Auth = () => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  labelWidth={70}
                 />
 
                 {errors.password && (
@@ -133,17 +127,35 @@ const Auth = () => {
                 width: "100%",
                 paddingTop: "0.7rem",
                 paddingBottom: "0.7rem",
+                borderRadius: 8,
               }}
               variant="contained"
               color="primary"
               type="submit"
               disabled={signinStatus === "loading"}
             >
-              <Typography>Login</Typography>
+              <Typography
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  textTransform: "none",
+                }}
+              >
+                Log In
+              </Typography>
             </Button>
             {signinStatus === "loading" && (
               <CircularProgress size={24} className={classes.buttonProgress} />
             )}
+          </div>
+          <div className={classes.credit}>
+            <Typography
+              color="primary"
+              variant="h6"
+              style={{ fontWeight: "bold" }}
+            >
+              English Quiz Admin
+            </Typography>
           </div>
         </form>
       </Paper>

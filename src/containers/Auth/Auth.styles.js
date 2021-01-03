@@ -30,9 +30,11 @@ export default makeStyles((theme) => ({
   },
   form: {
     margin: "0.5rem",
-    padding: "1rem",
-    minWidth: "30%",
-    borderRadius: 8,
+    padding: "1.2rem",
+    minWidth: "40%",
+    height: "40%",
+    borderRadius: 16,
+    boxShadow: "0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1)",
   },
   buttonProgress: {
     color: theme.palette.primary,
@@ -41,5 +43,14 @@ export default makeStyles((theme) => ({
     left: "50%",
     marginTop: -12,
     marginLeft: -12,
+  },
+  credit: {
+    marginTop: "1rem",
+    borderTop: "1px solid rgba(0,0,0,0.1)",
+    borderBottom: "1px solid rgba(0,0,0,0.1)",
+    padding: "1rem",
+    fontSize: 20,
+    justifyContent: "center",
+    display: "flex",
   },
 }));
