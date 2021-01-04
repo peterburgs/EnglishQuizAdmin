@@ -9,6 +9,7 @@ import {
   Checkbox,
   ListItemSecondaryAction,
   IconButton,
+  Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +21,7 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import CustomizedSnackbar from "../../../components/CustomizedSnackbar/CustomizedSnackbar";
 import QuestionDialog from "../../Question/QuestionDialog/QuestionDialog";
-import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
+import MoreHorizOutlinedIcon from "@material-ui/icons/MoreHorizOutlined";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -114,7 +115,7 @@ const CustomList = (props) => {
             const labelId = `checkbox-list-label-${element._id}`;
             return (
               <div key={element._id}>
-                <ListItem role={undefined} dense button>
+                <ListItem role={undefined} dense>
                   <ListItemIcon>
                     <Checkbox
                       onChange={() =>
@@ -136,7 +137,30 @@ const CustomList = (props) => {
                       inputProps={{ "aria-labelledby": labelId }}
                     />
                   </ListItemIcon>
-                  <ListItemText id={labelId} primary={element.questionText} />
+                  <ListItemText
+                    id={labelId}
+                    primary={<Typography>{element.questionText}</Typography>}
+                  />
+                  <ListItemText
+                    primary={
+                      <Typography style={{ color: "white" }}>
+                        {element.questionText}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography
+                        style={{
+                          marginTop: -25,
+                        }}
+                      >
+                        {element.type === "singleSelection"
+                          ? " Single selection"
+                          : element.type === "translate"
+                          ? " Translate"
+                          : " Arrange"}
+                      </Typography>
+                    }
+                  />
                   <ListItemSecondaryAction>
                     <IconButton
                       onClick={() => dispatch(setQuestionIdToView(element._id))}

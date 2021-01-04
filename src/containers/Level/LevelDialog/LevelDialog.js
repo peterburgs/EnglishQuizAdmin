@@ -80,6 +80,8 @@ const LevelDialog = (props) => {
 
   const levelIdToEdit = useSelector((state) => state.levels.levelIdToEdit);
 
+  const levels = useSelector((state) => state.levels.levels);
+
   useEffect(() => {
     if (levelIdToEdit) {
       (async () => {
@@ -93,6 +95,7 @@ const LevelDialog = (props) => {
   }, [dispatch, levelIdToEdit, setValue]);
 
   const onSubmit = async (data) => {
+    console.log(data);
     if (levelIdToEdit) {
       await handleUpdateLevel(data);
       props.onFinish();
@@ -164,13 +167,14 @@ const LevelDialog = (props) => {
               name="order"
               type="number"
               autoComplete="off"
-              inputRef={register({ required: true })}
+              inputRef={register({
+                required: true,
+              })}
               label="Order"
               variant="outlined"
-              defaultValue={levelIdToEdit ? 0 : null}
+              defaultValue={levelIdToEdit ? 0 : levels.length + 1}
               className={classes.formElement}
               error={Boolean(errors.order)}
-              helperText={errors.order ? "*This field is required" : null}
             />
             <TextField
               id="requiredExp"
@@ -180,7 +184,7 @@ const LevelDialog = (props) => {
               inputRef={register({ required: true })}
               label="Required Experience point"
               variant="outlined"
-              defaultValue={levelIdToEdit ? 0 : null}
+              defaultValue={levelIdToEdit ? 0 : 100}
               className={classes.formElement}
               error={Boolean(errors.requiredExp)}
               helperText={errors.requiredExp ? "*This field is required" : null}
