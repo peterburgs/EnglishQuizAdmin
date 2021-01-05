@@ -200,6 +200,7 @@ const QuestionDialog = (props) => {
     translateRemove,
     arrangeAppend,
     arrangeRemove,
+    reset,
   ]);
 
   const onSubmit = async (data) => {
