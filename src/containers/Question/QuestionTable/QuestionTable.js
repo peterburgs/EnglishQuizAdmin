@@ -54,6 +54,10 @@ const QuestionTable = (props) => {
       label: "Question code",
     },
     {
+      id: "difficulty",
+      label: "Difficulty",
+    },
+    {
       id: "questionRequirement",
       label: "Question requirement",
     },
@@ -190,6 +194,23 @@ const QuestionTable = (props) => {
                         >
                           <FileCopyOutlinedIcon fontSize="small" />
                         </IconButton>
+                      </TableCell>
+                      <TableCell align="left">
+                        <Paper
+                          style={{
+                            padding: "0.5rem",
+                            background:
+                              row.difficulty === "EASY"
+                                ? "green"
+                                : row.difficulty === "MEDIUM"
+                                ? "#f88f01"
+                                : "red",
+                            maxWidth: "70px",
+                            color: "white",
+                          }}
+                        >
+                          {row.difficulty}
+                        </Paper>
                       </TableCell>
                       <TableCell align="left">
                         {row.questionRequirement}

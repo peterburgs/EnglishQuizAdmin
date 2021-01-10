@@ -153,6 +153,7 @@ const QuestionDialog = (props) => {
         );
         setValue("questionText", result.payload.question.questionText);
         setValue("type", result.payload.question.type);
+        setValue("difficulty", result.payload.question.difficulty);
         setType(result.payload.question.type);
         if (result.payload.question.type === "singleSelection") {
           result.payload.question.singleSelection.forEach((e) => {
@@ -273,8 +274,6 @@ const QuestionDialog = (props) => {
                   value={props.value}
                   onChange={(e) => {
                     props.onChange(e.target.value);
-                    console.log(props.value);
-                    console.log(typeof props.value);
                   }}
                 >
                   <Grid
@@ -627,7 +626,28 @@ const QuestionDialog = (props) => {
                 errors.questionText ? "*This field is required" : null
               }
             />
-            <DialogContentText>Topic image</DialogContentText>
+            <Controller
+              name="difficulty"
+              control={control}
+              defaultValue={"EASY"}
+              rules={{ required: true }}
+              render={(props) => (
+                <FormControl variant="outlined" className={classes.formElement}>
+                  <InputLabel id="difficulty-label">Difficulty</InputLabel>
+                  <Select
+                    labelId="difficulty-label"
+                    value={props.value}
+                    onChange={(e) => props.onChange(e.target.value)}
+                    label="Difficulty"
+                  >
+                    <MenuItem value="EASY">Easy</MenuItem>
+                    <MenuItem value="MEDIUM">Medium</MenuItem>
+                    <MenuItem value="HARD">Hard</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
+            <DialogContentText>Question image</DialogContentText>
             {!questionIdToView ? (
               <React.Fragment>
                 <input
