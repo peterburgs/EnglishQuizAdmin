@@ -84,7 +84,6 @@ export const updateQuestion = createAsyncThunk(
       if (question.questionImage.length !== 0) {
         data.append("questionImage", question.questionImage[0]);
       }
-
       const res = await api.put(
         `/questions/${getState().questions.questionIdToEdit}`,
         data,

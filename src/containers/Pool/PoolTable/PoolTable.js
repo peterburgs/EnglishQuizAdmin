@@ -23,6 +23,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { setCurrentPool } from "../PoolSlice";
+import { setCurrentTopic } from "../../Topic/TopicSlice";
 
 const StyledTableRow = withStyles(() => ({
   root: {
@@ -168,6 +169,7 @@ const PoolTable = (props) => {
                           }}
                           onClick={() => {
                             dispatch(setCurrentPool(row));
+                            dispatch(setCurrentTopic(null));
                             history.push(`/pools/${row._id}/questions`);
                           }}
                         >

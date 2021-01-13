@@ -28,6 +28,7 @@ import Spinner from "../../../components/Spinner/Spinner";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { Link, useHistory } from "react-router-dom";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+import RemoveIcon from "@material-ui/icons/Remove";
 
 const useFetchQuestion = (poolId) => {
   const dispatch = useDispatch();
@@ -181,7 +182,7 @@ const PoolQuestion = () => {
         <Grid container justify="center">
           <Grid item xs={11} style={{ marginBottom: "1rem" }}>
             <Breadcrumbs
-              separator={<NavigateNextIcon fontSize="large" />}
+              separator={<Typography variant="h5">/</Typography>}
               style={{ color: "white" }}
               aria-label="breadcrumb"
             >

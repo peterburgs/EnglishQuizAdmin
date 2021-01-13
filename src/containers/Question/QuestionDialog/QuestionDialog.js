@@ -488,7 +488,7 @@ const QuestionDialog = (props) => {
                   label="_id"
                   variant="outlined"
                   disabled={Boolean(questionIdToView)}
-                  defaultValue={item._id}
+                  defaultValue={uuidv1()}
                   error={Boolean(errors[`arrange[${index}]._id`])}
                   helperText={
                     errors[`arrange[${index}]._id`]
@@ -508,7 +508,7 @@ const QuestionDialog = (props) => {
                   variant="outlined"
                   disabled={Boolean(questionIdToView)}
                   defaultValue={
-                    questionIdToEdit || questionIdToView ? item.order : null
+                    questionIdToEdit || questionIdToView ? item.order : -1
                   }
                   error={Boolean(errors[`arrange[${index}].order`])}
                   helperText={
@@ -538,7 +538,7 @@ const QuestionDialog = (props) => {
             color="primary"
             startIcon={<AddIcon />}
             onClick={() =>
-              arrangeAppend({ word: "", order: "", _id: uuidv1() })
+              arrangeAppend({ word: "", order: null, _id: uuidv1() })
             }
           >
             New word
@@ -596,6 +596,33 @@ const QuestionDialog = (props) => {
               : "New question"}
           </DialogTitle>
           <DialogContent>
+            <Controller
+              name="type"
+              control={control}
+              defaultValue={type}
+              render={(props) => (
+                <FormControl variant="outlined" className={classes.formElement}>
+                  <InputLabel id="type-label">Type</InputLabel>
+                  <Select
+                    disabled={Boolean(questionIdToView)}
+                    labelId="type-label"
+                    value={props.value}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                      reset();
+                      setType(e.target.value);
+                    }}
+                    label="Type"
+                  >
+                    <MenuItem value={"singleSelection"}>
+                      Single Selection
+                    </MenuItem>
+                    <MenuItem value={"translate"}>Translate</MenuItem>
+                    <MenuItem value={"arrange"}>Arrange</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
             <TextField
               id="questionRequirement"
               name="questionRequirement"
@@ -698,33 +725,6 @@ const QuestionDialog = (props) => {
                 />
               ) : null}
             </div>
-            <Controller
-              name="type"
-              control={control}
-              defaultValue={type}
-              render={(props) => (
-                <FormControl variant="outlined" className={classes.formElement}>
-                  <InputLabel id="type-label">Type</InputLabel>
-                  <Select
-                    disabled={Boolean(questionIdToView)}
-                    labelId="type-label"
-                    value={props.value}
-                    onChange={(e) => {
-                      props.onChange(e.target.value);
-                      reset();
-                      setType(e.target.value);
-                    }}
-                    label="Type"
-                  >
-                    <MenuItem value={"singleSelection"}>
-                      Single Selection
-                    </MenuItem>
-                    <MenuItem value={"translate"}>Translate</MenuItem>
-                    <MenuItem value={"arrange"}>Arrange</MenuItem>
-                  </Select>
-                </FormControl>
-              )}
-            />
             {renderAnswers(type)}
           </DialogContent>
           <DialogActions style={{ padding: "16px 24px" }}>

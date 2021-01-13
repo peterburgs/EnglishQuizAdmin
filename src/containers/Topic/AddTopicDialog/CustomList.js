@@ -140,6 +140,7 @@ const CustomList = (props) => {
                   <ListItemText
                     id={labelId}
                     primary={<Typography>{element.questionText}</Typography>}
+                    secondary={element.difficulty}
                   />
                   <ListItemText
                     primary={
