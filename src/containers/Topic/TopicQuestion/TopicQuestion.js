@@ -201,7 +201,7 @@ const TopicQuestion = () => {
         <Grid container justify="center">
           <Grid item xs={11} style={{ marginBottom: "1rem" }}>
             <Breadcrumbs
-              separator={<NavigateNextIcon fontSize="large" />}
+              separator={<Typography variant="h5">/</Typography>}
               style={{ color: "white" }}
               aria-label="breadcrumb"
             >

@@ -27,6 +27,7 @@ export const addQuestion = createAsyncThunk(
       data.append("questionRequirement", question.questionRequirement);
       data.append("questionText", question.questionText);
       data.append("type", question.type);
+      data.append("difficulty", question.difficulty);
       if (question.type === "singleSelection") {
         data.append(
           "singleSelection",
@@ -65,6 +66,7 @@ export const updateQuestion = createAsyncThunk(
       data.append("questionRequirement", question.questionRequirement);
       data.append("questionText", question.questionText);
       data.append("type", question.type);
+      data.append("difficulty", question.difficulty);
       if (question.type === "singleSelection") {
         data.append(
           "singleSelection",
@@ -82,7 +84,6 @@ export const updateQuestion = createAsyncThunk(
       if (question.questionImage.length !== 0) {
         data.append("questionImage", question.questionImage[0]);
       }
-
       const res = await api.put(
         `/questions/${getState().questions.questionIdToEdit}`,
         data,

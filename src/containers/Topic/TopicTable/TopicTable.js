@@ -23,6 +23,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { setCurrentTopic } from "../TopicSlice";
+import { setCurrentPool } from "../../Pool/PoolSlice";
 
 const StyledTableRow = withStyles(() => ({
   root: {
@@ -141,100 +142,99 @@ const TopicTable = (props) => {
             New Topic
           </Button>
         </EnhancedToolbar>
-        <TableContainer>
-          <SimpleBar style={{ maxHeight: "calc(100% - 10px)" }}>
-            <Table
-              style={{
-                minWidth: 700,
-              }}
-              stickyHeader
-            >
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onCreateSortHandler={createSortHandler}
-                headCells={headCells}
-                isAllowSort={true}
-              />
-              <TableBody>
-                {stableSort(props.topics, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => (
-                    <StyledTableRow key={row._id} className={classes.row}>
-                      <TableCell component="th" scope="row">
-                        {rowsPerPage * page + index + 1}
-                      </TableCell>
-                      <TableCell align="left">
-                        <Button
-                          style={{
-                            color: "#d7385e",
-                            fontWeight: "bold",
-                          }}
+        <TableContainer style={{ maxHeight: 300 }}>
+          <Table
+            style={{
+              minWidth: 700,
+            }}
+            stickyHeader
+          >
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onCreateSortHandler={createSortHandler}
+              headCells={headCells}
+              isAllowSort={true}
+            />
+            <TableBody>
+              {stableSort(props.topics, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => (
+                  <StyledTableRow key={row._id} className={classes.row}>
+                    <TableCell component="th" scope="row">
+                      {rowsPerPage * page + index + 1}
+                    </TableCell>
+                    <TableCell align="left">
+                      <Button
+                        style={{
+                          color: "#d7385e",
+                          fontWeight: "bold",
+                        }}
+                        onClick={() => {
+                          dispatch(setCurrentTopic(row));
+                          dispatch(setCurrentPool(null));
+                          history.push(`/topics/${row._id}/questions`);
+                        }}
+                      >
+                        {row.name}
+                      </Button>
+                    </TableCell>
+                    <TableCell align="left">{row.level.name}</TableCell>
+                    <TableCell align="center">{row.order}</TableCell>
+                    <TableCell align="left">{row.createdAt}</TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                        id={`${row._id}-menu`} // <-- Magic code
+                        onClick={handleOpenActionMenu}
+                        style={{ padding: 0 }}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        anchorEl={actionMenuAnchorEl}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        open={
+                          actionMenuAnchorEl
+                            ? actionMenuAnchorEl.id === `${row._id}-menu`
+                            : false
+                        } // <-- Magic code
+                        onClose={handleCloseActionMenu}
+                      >
+                        <MenuItem
                           onClick={() => {
-                            dispatch(setCurrentTopic(row));
-                            history.push(`/topics/${row._id}/questions`);
+                            dispatch(setTopicIdToEdit(row._id));
+                            setActionMenuAnchorEl(null);
                           }}
                         >
-                          {row.name}
-                        </Button>
-                      </TableCell>
-                      <TableCell align="left">{row.level.name}</TableCell>
-                      <TableCell align="center">{row.order}</TableCell>
-                      <TableCell align="left">{row.createdAt}</TableCell>
-                      <TableCell align="center">
-                        <IconButton
-                          id={`${row._id}-menu`} // <-- Magic code
-                          onClick={handleOpenActionMenu}
-                          style={{ padding: 0 }}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          anchorEl={actionMenuAnchorEl}
-                          anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
+                          Edit
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            dispatch(setTopicIdToDelete(row._id));
+                            setActionMenuAnchorEl(null);
                           }}
-                          keepMounted
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                          }}
-                          open={
-                            actionMenuAnchorEl
-                              ? actionMenuAnchorEl.id === `${row._id}-menu`
-                              : false
-                          } // <-- Magic code
-                          onClose={handleCloseActionMenu}
                         >
-                          <MenuItem
-                            onClick={() => {
-                              dispatch(setTopicIdToEdit(row._id));
-                              setActionMenuAnchorEl(null);
-                            }}
-                          >
-                            Edit
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() => {
-                              dispatch(setTopicIdToDelete(row._id));
-                              setActionMenuAnchorEl(null);
-                            }}
-                          >
-                            Delete
-                          </MenuItem>
-                        </Menu>
-                      </TableCell>
-                    </StyledTableRow>
-                  ))}
-                {/* {emptyRows > 0 && (
+                          Delete
+                        </MenuItem>
+                      </Menu>
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
+              {/* {emptyRows > 0 && (
                   <TableRow style={{ height: 53 * emptyRows }}>
                     <TableCell colSpan={5} />
                   </TableRow>
                 )} */}
-              </TableBody>
-            </Table>
-          </SimpleBar>
+            </TableBody>
+          </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[10]}

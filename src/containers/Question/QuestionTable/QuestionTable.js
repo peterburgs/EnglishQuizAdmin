@@ -54,6 +54,10 @@ const QuestionTable = (props) => {
       label: "Question code",
     },
     {
+      id: "difficulty",
+      label: "Difficulty",
+    },
+    {
       id: "questionRequirement",
       label: "Question requirement",
     },
@@ -146,110 +150,125 @@ const QuestionTable = (props) => {
             New question
           </Button>
         </EnhancedToolbar>
-        <TableContainer>
-          <SimpleBar style={{ maxHeight: "calc(50vh - 10px)" }}>
-            <Table
-              style={{
-                minWidth: 700,
-              }}
-              stickyHeader
-            >
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onCreateSortHandler={createSortHandler}
-                headCells={headCells}
-                isAllowSort={true}
-              />
-              <TableBody>
-                {stableSort(props.questions, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => (
-                    <StyledTableRow key={row._id} className={classes.row}>
-                      <TableCell component="th" scope="row">
-                        {rowsPerPage * page + index + 1}
-                      </TableCell>
-                      <TableCell align="left">
-                        <Button
-                          style={{
-                            color: "#d7385e",
-                            fontWeight: "bold",
-                          }}
+        <TableContainer style={{ maxHeight: 400 }}>
+          <Table
+            style={{
+              minWidth: 700,
+            }}
+            stickyHeader
+          >
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onCreateSortHandler={createSortHandler}
+              headCells={headCells}
+              isAllowSort={true}
+            />
+            <TableBody>
+              {stableSort(props.questions, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => (
+                  <StyledTableRow key={row._id} className={classes.row}>
+                    <TableCell component="th" scope="row">
+                      {rowsPerPage * page + index + 1}
+                    </TableCell>
+                    <TableCell align="left">
+                      <Button
+                        style={{
+                          color: "#d7385e",
+                          fontWeight: "bold",
+                        }}
+                        onClick={() => {
+                          dispatch(setQuestionIdToEdit(row._id));
+                          console.log(row);
+                        }}
+                      >
+                        {row.code}
+                      </Button>
+                      <IconButton
+                        onClick={() => {
+                          navigator.clipboard.writeText(row.code);
+                          setIsCopied(true);
+                        }}
+                      >
+                        <FileCopyOutlinedIcon fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell align="left">
+                      <Paper
+                        style={{
+                          padding: "0.5rem",
+                          background:
+                            row.difficulty === "EASY"
+                              ? "green"
+                              : row.difficulty === "MEDIUM"
+                              ? "#f88f01"
+                              : "red",
+                          maxWidth: "70px",
+                          color: "white",
+                        }}
+                      >
+                        {row.difficulty}
+                      </Paper>
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.questionRequirement}
+                    </TableCell>
+                    <TableCell align="left">{row.questionText}</TableCell>
+                    <TableCell align="left">{row.createdAt}</TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                        id={`${row._id}-menu`} // <-- Magic code
+                        onClick={handleOpenActionMenu}
+                        style={{ padding: 0 }}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        anchorEl={actionMenuAnchorEl}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        open={
+                          actionMenuAnchorEl
+                            ? actionMenuAnchorEl.id === `${row._id}-menu`
+                            : false
+                        } // <-- Magic code
+                        onClose={handleCloseActionMenu}
+                      >
+                        <MenuItem
                           onClick={() => {
                             dispatch(setQuestionIdToEdit(row._id));
-                            console.log(row);
+                            setActionMenuAnchorEl(null);
                           }}
                         >
-                          {row.code}
-                        </Button>
-                        <IconButton
+                          Edit
+                        </MenuItem>
+                        <MenuItem
                           onClick={() => {
-                            navigator.clipboard.writeText(row.code);
-                            setIsCopied(true);
+                            dispatch(setQuestionIdToDelete(row._id));
+                            setActionMenuAnchorEl(null);
                           }}
                         >
-                          <FileCopyOutlinedIcon fontSize="small" />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell align="left">
-                        {row.questionRequirement}
-                      </TableCell>
-                      <TableCell align="left">{row.questionText}</TableCell>
-                      <TableCell align="left">{row.createdAt}</TableCell>
-                      <TableCell align="center">
-                        <IconButton
-                          id={`${row._id}-menu`} // <-- Magic code
-                          onClick={handleOpenActionMenu}
-                          style={{ padding: 0 }}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          anchorEl={actionMenuAnchorEl}
-                          anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                          }}
-                          keepMounted
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                          }}
-                          open={
-                            actionMenuAnchorEl
-                              ? actionMenuAnchorEl.id === `${row._id}-menu`
-                              : false
-                          } // <-- Magic code
-                          onClose={handleCloseActionMenu}
-                        >
-                          <MenuItem
-                            onClick={() => {
-                              dispatch(setQuestionIdToEdit(row._id));
-                              setActionMenuAnchorEl(null);
-                            }}
-                          >
-                            Edit
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() => {
-                              dispatch(setQuestionIdToDelete(row._id));
-                              setActionMenuAnchorEl(null);
-                            }}
-                          >
-                            Delete
-                          </MenuItem>
-                        </Menu>
-                      </TableCell>
-                    </StyledTableRow>
-                  ))}
-                {/* {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={5} />
-                  </TableRow>
-                )} */}
-              </TableBody>
-            </Table>
-          </SimpleBar>
+                          Delete
+                        </MenuItem>
+                      </Menu>
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={5} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[10]}
