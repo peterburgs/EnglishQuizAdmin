@@ -9,6 +9,7 @@ import {
   Checkbox,
   ListItemSecondaryAction,
   IconButton,
+  Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
@@ -148,10 +149,35 @@ const CustomList = (props) => {
                       inputProps={{ "aria-labelledby": labelId }}
                     />
                   </ListItemIcon>
-                  <ListItemText id={labelId} primary={element.questionText} />
+                  <ListItemText
+                    id={labelId}
+                    primary={element.questionText}
+                  />
+                  <ListItemText
+                    primary={
+                      <Typography style={{ color: "white" }}>
+                        {element.questionText}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography
+                        style={{
+                          marginTop: -25,
+                        }}
+                      >
+                        {element.type === "singleSelection"
+                          ? " Single selection"
+                          : element.type === "translate"
+                          ? " Translate"
+                          : " Arrange"}
+                      </Typography>
+                    }
+                  />
                   <ListItemSecondaryAction>
                     <IconButton
-                      onClick={() => dispatch(setQuestionIdToView(element._id))}
+                      onClick={() =>
+                        dispatch(setQuestionIdToView(element._id))
+                      }
                       edge="end"
                     >
                       <MoreHorizOutlinedIcon />
